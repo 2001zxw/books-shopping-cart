@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+		<link
+			rel="stylesheet"
+			href="../node_modules/bootstrap/dist/css/bootstrap.min.css"
+		/>
+		<script src="../node_modules/vue/dist/vue.global.js"></script>
+		<style>
+			table {
+				table-layout: fixed;
+				position: relative;
+			}
+			#tan {
+				width: 150px;
+				height: 50px;
+				text-align: center;
+				display: inline-block;
+				line-height: 50px;
+				border-radius: 50px;
+				position: absolute;
+				top: 45%;
+				left: 45%;
+				display: none;
+			}
+			#kong{
+				height: 200px;
+				text-align: center;
+				display: inline-block;
+				font-size: 40px;
+				line-height: 200px;
+				border-radius: 30px;
+				position: absolute;
+				top: 35%;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="app">
+			<div class="container">
+				<div class="row">
+					<h1>购书车</h1>
+				</div>
+				<div class="row">
+					<div class="col-sm-12">
+						<table class="table table-responsive table-bordered">
+							<thead>
+								<tr>
+									<th>id</th>
+									<th>书名</th>
+									<th>数量</th>
+									<th>单价</th>
+									<th>小计</th>
+									<th>操作</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr v-for="(book,index) of books" :key="id">
+									<td>{{book.id}}</td>
+									<td>《{{book.name}}》</td>
+									<td>
+										<button
+											@click="decrement(index)"
+											:disabled="book.count<=1"
+										>
+											-
+										</button>
+										{{book.count}}
+										<button @click="increment(index)">
+											+
+										</button>
+									</td>
+									<td>￥{{book.price}}</td>
+									<td>￥{{book.count*book.price}}</td>
+									<td>
+										<button id="sc" @click="del(index)">
+											删除
+										</button>
+										&nbsp;
+										<button id="res" @click="res(index)">
+											重置
+										</button>
+									</td>
+								</tr>
+								<tr v-show="!seen()">
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td>总价:{{totalPrice}}</td>
+									<td></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			<div id="tan" class="bg-info">删除成功!!</div>
+			<div id="kong" class="col-sm-8 col-sm-push-2 bg-primary" v-show="seen()">
+				您的购书车空空如也~~~
+			</div>
+		</div>
+		<script>
+			const { createApp } = Vue;
+			createApp({
+				data() {
+					return {
+						books: [
+							{ id: 0, name: "三体", price: 79, count: 1 },
+							{ id: 1, name: "平凡的世界", price: 79, count: 1 },
+							{ id: 2, name: "大江东去", price: 79, count: 1 },
+							{ id: 3, name: "五大贼王", price: 79, count: 1 },
+							{ id: 4, name: "大魔法师", price: 79, count: 1 },
+							{ id: 5, name: "哑舍", price: 79, count: 1 },
+							{
+								id: 6,
+								name: "遥远的救世主",
+								price: 79,
+								count: 1,
+							},
+						],
+						seen(){
+							return this.books.length===0?true:false
+						}
+					};
+				},
+				methods: {
+					increment(index) {
+						this.books[index].count++;
+					},
+					decrement(index) {
+						this.books[index].count =
+							this.books[index].count <= 1
+								? 1
+								: this.books[index].count - 1;
+					},
+					del(index) {
+						this.books.splice(index, 1);
+						let tan = document.querySelector("#tan");
+						tan.style.display = "block";
+						setTimeout(() => {
+							tan.style.display = "none";
+						}, 500);
+					},
+					res(index) {
+						this.books[index].count = 1;
+					},
+				},
+				computed: {
+					totalPrice() {
+						return this.books.reduce(
+							(pre, book) => pre + book.price * book.count,
+							0
+						);
+					},
+	
+				},
+			}).mount("#app");
+		</script>
+	</body>
+</html>
